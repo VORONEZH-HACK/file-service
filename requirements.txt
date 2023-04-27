@@ -1,0 +1,6 @@
+uvicorn
+fastapi
+psycopg2-binary
+sqlmodel
+boto3
+python-dotenv
