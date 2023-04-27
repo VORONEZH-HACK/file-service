@@ -56,7 +56,7 @@ async def validate_token(access_token: str) -> UUID:
 
 
 @app.post("/file", response_model=File)
-async def upload_file(type: str, file: UploadFile = File(...), access_token: str = Header(None), db: Session = Depends(get_session)):
+async def upload_file(file: UploadFile, filetype: str = Query(None), access_token: str = Header(None), db: Session = Depends(get_session)):
     user_id = await validate_token(access_token)
     if not user_id: 
         raise HTTPException(status_code=400, detail="Invalid access token")
@@ -66,7 +66,7 @@ async def upload_file(type: str, file: UploadFile = File(...), access_token: str
     except NoCredentialsError:
         raise HTTPException(status_code=500, detail="Missing AWS credentials")
 
-    new_file = File(name=file.filename, user_id=user_id, type=type)
+    new_file = File(name=file.filename, user_id=user_id, type=filetype)
     db.add(new_file)
     db.commit()
     db.refresh(new_file)
@@ -75,7 +75,7 @@ async def upload_file(type: str, file: UploadFile = File(...), access_token: str
 
 
 @app.get("/file", response_model=List[File])
-async def get_files(user: str, access_token: str = Header(None), db: Session = Depends(get_db_session)):
+async def get_files(user: str, access_token: str = Header(None), db: Session = Depends(get_session)):
     user_id = await validate_token(access_token)
     if not user_id:
         raise HTTPException(status_code=401, detail="Invalid access token")
