@@ -57,7 +57,7 @@ async def validate_token(access_token: str) -> UUID:
 
 @app.post("/file", response_model=File)
 async def upload_file(file: UploadFile, filetype: str = Query(None), access_token: str = Header(None), db: Session = Depends(get_session)):
-    log.info('filetype: ', user_id)
+    log.info('filetype: ', filetype)
     log.info('access token: ', access_token)
     user_id = await validate_token(access_token)
     log.info('User id: ', user_id)
