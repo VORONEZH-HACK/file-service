@@ -27,7 +27,7 @@ s3 = boto3.client(
 
 logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s',
-    level=logging.INFO
+    level=logging.DEBUG
 )
 
 log = logging.getLogger(__name__)
@@ -57,7 +57,10 @@ async def validate_token(access_token: str) -> UUID:
 
 @app.post("/file", response_model=File)
 async def upload_file(file: UploadFile, filetype: str = Query(None), access_token: str = Header(None), db: Session = Depends(get_session)):
+    log.info('filetype: ', user_id)
+    log.info('access token: ', access_token)
     user_id = await validate_token(access_token)
+    log.info('User id: ', user_id)
     if not user_id: 
         raise HTTPException(status_code=400, detail="Invalid access token")
 
